@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk Pembeli - AZARIYA</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --primary-green: #5a7862; --dark-green: #2d3e32; --light-green: #eaf0ec; --accent-green: #8cae96; --bg-color: #f7f9f7; --text-dark: #1a241c; --text-muted: #6b7c70; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+        .auth-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-color: var(--bg-color); justify-content: center; align-items: center; padding: 20px; }
+        .auth-overlay.active { display: flex; }
+        .auth-card { background: #ffffff; border: 1px solid var(--light-green); padding: 30px 25px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.08); width: 100%; max-width: 400px; text-align: center; }
+        .auth-card h2 { color: var(--dark-green); margin-bottom: 8px; font-size: 1.5rem; }
+        .auth-card p { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 20px; }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--dark-green); margin-bottom: 6px; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; outline: none; }
+        .btn-auth { width: 100%; padding: 12px; background-color: var(--dark-green); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 10px; }
+        .welcome-text { animation: slowFadeIn 2.5s ease-in-out forwards; opacity: 0; }
+        @keyframes slowFadeIn {
+            0% { opacity: 0; transform: scale(0.92); }
+            50% { opacity: 0.5; transform: scale(0.97); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <!-- STEP 1 -->
+    <div id="auth-step-1" class="auth-overlay active">
+        <div class="auth-card">
+            <h2>Masuk ke AZARIYA</h2>
+            <p>Masukkan email aktif kamu untuk melanjutkan</p>
+            <form onsubmit="handleAuthStep1(event)">
+                <div class="form-group">
+                    <label for="input-email">Alamat Email</label>
+                    <input type="email" id="input-email" class="form-input" placeholder="contoh: azariya@email.com" required>
+                </div>
+                <button type="submit" class="btn-auth">Lanjut <i class="fas fa-arrow-right"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div id="auth-step-2" class="auth-overlay">
+        <div class="auth-card">
+            <h2>Lengkapi Profil</h2>
+            <p>Masukkan nama pengguna dan kata sandi kamu</p>
+            <form onsubmit="handleAuthStep2(event)">
+                <div class="form-group">
+                    <label for="input-username">Nama Pengguna (Username)</label>
+                    <input type="text" id="input-username" class="form-input" placeholder="Masukkan nama kamu" required>
+                </div>
+                <div class="form-group">
+                    <label for="input-password">Kata Sandi</label>
+                    <input type="password" id="input-password" class="form-input" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-auth">Lanjut <i class="fas fa-arrow-right"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div id="auth-step-3" class="auth-overlay">
+        <div class="auth-card">
+            <h2>Kontak & Alamat</h2>
+            <p>Masukkan nomor telepon dan alamat pengiriman kamu</p>
+            <form onsubmit="handleAuthStep3(event)">
+                <div class="form-group">
+                    <label for="input-phone">Nomor Telepon</label>
+                    <input type="tel" id="input-phone" class="form-input" placeholder="contoh: +62 812-3456-7890" required>
+                </div>
+                <div class="form-group">
+                    <label for="input-address">Alamat Pengiriman Utama</label>
+                    <textarea id="input-address" class="form-input" rows="3" placeholder="Jl. Cempaka Indah No. 45, Jakarta..." required></textarea>
+                </div>
+                <button type="submit" class="btn-auth">Masuk / Daftar <i class="fas fa-check"></i></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STEP 4: WELCOME SCREEN DENGAN ANIMASI MUNCUL PERLAHAN -->
+    <div id="auth-step-welcome" class="auth-overlay">
+        <div class="auth-card welcome-text" style="padding: 40px 20px;">
+            <i class="fas fa-check-circle" style="font-size: 3.5rem; color: var(--primary-green); margin-bottom: 15px;"></i>
+            <h2 id="welcome-user-name" style="font-size: 1.6rem; color: var(--dark-green); margin-bottom: 10px;">Selamat datang di toko azariya!</h2>
+            <p style="margin-bottom: 25px;">Nikmati pengalaman belanja sepatu premium terbaik pilihanmu.</p>
+            <button class="btn-auth" onclick="location.href='buyer_dashboard.html'">Masuk ke Beranda <i class="fas fa-shopping-bag"></i></button>
+        </div>
+    </div>
+
+    <script>
+        let userProfile = {};
+        function handleAuthStep1(e) {
+            e.preventDefault();
+            userProfile.email = document.getElementById('input-email').value;
+            document.getElementById('auth-step-1').classList.remove('active');
+            document.getElementById('auth-step-2').classList.add('active');
+        }
+        function handleAuthStep2(e) {
+            e.preventDefault();
+            userProfile.username = document.getElementById('input-username').value;
+            document.getElementById('auth-step-2').classList.remove('active');
+            document.getElementById('auth-step-3').classList.add('active');
+        }
+        function handleAuthStep3(e) {
+            e.preventDefault();
+            userProfile.phone = document.getElementById('input-phone').value;
+            userProfile.address = document.getElementById('input-address').value;
+            document.getElementById('auth-step-3').classList.remove('active');
+            document.getElementById('welcome-user-name').innerText = `Selamat datang di toko azariya, ${userProfile.username}!`;
+            document.getElementById('auth-step-welcome').classList.add('active');
+        }
+    </script>
+</body>
+</html>
