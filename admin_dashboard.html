@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - AZARIYA</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --primary-green: #5a7862; --dark-green: #2d3e32; --light-green: #eaf0ec; --accent-green: #8cae96; --bg-color: #f7f9f7; --text-dark: #1a241c; --text-muted: #6b7c70; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-dark); min-height: 100vh; padding-bottom: 50px; }
+        header { background: linear-gradient(135deg, var(--dark-green), var(--primary-green)); color: #fff; padding: 20px; text-align: center; position: sticky; top: 0; z-index: 100; }
+        header h1 { font-size: 1.6rem; letter-spacing: 3px; font-weight: 700; }
+        .admin-nav-bar { position: absolute; top: 15px; right: 20px; }
+        .btn-admin-logout { background-color: #e63946; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+        .page-view { display: none; padding: 15px; max-width: 1200px; margin: 0 auto; }
+        .page-view.active { display: block; }
+        .admin-big-btn { display: block; width: 100%; max-width: 320px; margin: 15px auto; padding: 18px 20px; background: linear-gradient(135deg, var(--dark-green), var(--primary-green)); color: #ffffff; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 700; cursor: pointer; text-align: center; }
+        .admin-sub-btn { display: inline-block; min-width: 150px; padding: 14px 20px; background-color: var(--dark-green); color: #ffffff; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: bold; cursor: pointer; }
+        .admin-card-container { background: #ffffff; border-radius: 16px; border: 1px solid var(--light-green); padding: 25px 20px; max-width: 600px; margin: 20px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+        .form-group { text-align: left; margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 0.8rem; font-weight: 600; color: var(--dark-green); margin-bottom: 6px; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.9rem; outline: none; }
+        .btn-auth { width: 100%; padding: 12px; background-color: var(--dark-green); color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 0.9rem; cursor: pointer; margin-top: 10px; }
+        .btn-back-nav { background: none; border: none; color: var(--dark-green); font-size: 0.95rem; font-weight: bold; display: flex; align-items: center; gap: 6px; cursor: pointer; margin-bottom: 15px; }
+        .table-responsive { width: 100%; overflow-x: auto; margin-top: 15px; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        .admin-table th, .admin-table td { padding: 10px 12px; border: 1px solid var(--light-green); text-align: left; }
+        .admin-table th { background-color: var(--light-green); color: var(--dark-green); font-weight: bold; }
+        .preview-img-box { width: 100%; height: 150px; border: 2px dashed var(--accent-green); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-top: 8px; overflow: hidden; background: #fafafa; }
+        .preview-img-box img { max-width: 100%; max-height: 100%; object-fit: cover; }
+        .report-btn-group { display: flex; flex-direction: column; align-items: center; gap: 15px; max-width: 400px; margin: 20px auto; }
+        .report-btn-row { display: flex; gap: 15px; width: 100%; justify-content: center; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>AZARIYA</h1>
+        <div class="admin-nav-bar">
+            <button class="btn-admin-logout" onclick="location.href='index.html'"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </header>
+
+    <!-- MENU UTAMA ADMIN -->
+    <div id="admin-main-menu" class="page-view active">
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 65vh; text-align: center;">
+            <p style="font-size: 1.2rem; color: var(--dark-green); font-weight: 700; margin-bottom: 25px;">Silakan pilih salah satu menu</p>
+            <button class="admin-big-btn" onclick="openAdminDashboard()"><i class="fas fa-tachometer-alt"></i> Dashboard</button>
+            <button class="admin-big-btn" onclick="openAdminReports()"><i class="fas fa-file-invoice-dollar"></i> Laporan</button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SUB (INPUT & VIEW) -->
+    <div id="admin-dashboard-view" class="page-view">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 0 auto 15px auto;">
+            <button class="btn-back-nav" onclick="openAdminMainMenu()"><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+            <span style="font-size: 0.9rem; font-weight: bold; color: var(--dark-green);">Dashboard Admin</span>
+        </div>
+        <div style="display: flex; justify-content: center; gap: 15px; margin-bottom: 20px;">
+            <button class="admin-sub-btn" id="btn-tab-input" onclick="switchAdminDashTab('input')"><i class="fas fa-plus-circle"></i> Input Barang</button>
+            <button class="admin-sub-btn" id="btn-tab-view" style="background-color: var(--accent-green);" onclick="switchAdminDashTab('view')"><i class="fas fa-boxes"></i> View Produk</button>
+        </div>
+
+        <div id="admin-sub-input" class="admin-card-container">
+            <h3 style="color: var(--dark-green); margin-bottom: 15px; font-size: 1.1rem; text-align: center;"><i class="fas fa-box-open"></i> Form Input Barang Baru</h3>
+            <form onsubmit="handleAdminAddProduct(event)">
+                <div class="form-group">
+                    <label>Upload Foto Produk (Dari Galeri):</label>
+                    <input type="file" id="admin-prod-file" accept="image/*" class="form-input" onchange="previewUploadImage(event)" required>
+                    <div class="preview-img-box" id="preview-container">
+                        <span style="color: var(--text-muted); font-size: 0.75rem;" id="preview-text">Pratinjau foto dari galeri akan muncul di sini</span>
+                        <img id="preview-img" src="" alt="Pratinjau" style="display: none;">
+                    </div>
+                </div>
+                <div class="form-group"><label for="admin-prod-name">Nama Produk Sepatu:</label><input type="text" id="admin-prod-name" class="form-input" placeholder="contoh: Nike Air Jordan" required></div>
+                <div class="form-group"><label for="admin-prod-price">Harga Produk (Rp):</label><input type="number" id="admin-prod-price" class="form-input" placeholder="contoh: 2500000" min="1000" required></div>
+                <div class="form-group"><label for="admin-prod-desc">Deskripsi Produk:</label><textarea id="admin-prod-desc" class="form-input" rows="3" placeholder="Deskripsi..." required></textarea></div>
+                <button type="submit" class="btn-auth"><i class="fas fa-upload"></i> Tambahkan Barang ke Toko</button>
+            </form>
+        </div>
+
+        <div id="admin-sub-view" class="admin-card-container" style="display: none;">
+            <h3 style="color: var(--dark-green); margin-bottom: 15px; font-size: 1.1rem; text-align: center;"><i class="fas fa-list"></i> Daftar Seluruh Produk Toko</h3>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead><tr><th>Foto</th><th>Nama Produk</th><th>Harga</th><th>Terjual</th><th>Rating</th></tr></thead>
+                    <tbody id="admin-product-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- LAPORAN PENJUALAN -->
+    <div id="admin-reports-view" class="page-view">
+        <div style="display: flex; justify-content: space-between; align-items: center; max-width: 600px; margin: 0 auto 15px auto;">
+            <button class="btn-back-nav" onclick="openAdminMainMenu()"><i class="fas fa-arrow-left"></i> Sebelumnya</button>
+            <span style="font-size: 0.9rem; font-weight: bold; color: var(--dark-green);">Laporan Penjualan</span>
+        </div>
+        <p style="text-align: center; font-size: 1rem; color: var(--dark-green); font-weight: 600; margin-bottom: 15px;">Pilih Jenis Laporan Penjualan:</p>
+        <div class="report-btn-group">
+            <button class="admin-sub-btn" style="width: 100%;" onclick="showReportType('harian')"><i class="fas fa-calendar-day"></i> Laporan Harian</button>
+            <div class="report-btn-row">
+                <button class="admin-sub-btn" style="flex: 1;" onclick="showReportType('bulanan')"><i class="fas fa-calendar-alt"></i> Laporan Bulanan</button>
+                <button class="admin-sub-btn" style="flex: 1; background-color: var(--primary-green);" onclick="showReportType('tahunan')"><i class="fas fa-chart-line"></i> Laporan Tahunan</button>
+            </div>
+        </div>
+        <div class="admin-card-container" id="report-result-box">
+            <h4 id="report-title" style="color: var(--dark-green); text-align: center; margin-bottom: 10px;">Laporan Harian Penjualan</h4>
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead><tr><th>Periode</th><th>Total Transaksi</th><th>Total Pendapatan</th></tr></thead>
+                    <tbody id="report-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let products = [
+            { id: 1, name: "Nike Free Flyknit 4.0", price: 2499000, image: "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&q=80", rating: 4.9, sold: 320 },
+            { id: 2, name: "Nike Air Max 1", price: 2899000, image: "https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?w=500&q=80", rating: 4.8, sold: 215 }
+        ];
+        let uploadedImageBase64 = "";
+
+        function hideAllViews() { document.querySelectorAll('.page-view').forEach(v => v.classList.remove('active')); }
+        function openAdminMainMenu() { hideAllViews(); document.getElementById('admin-main-menu').classList.add('active'); }
+        function openAdminDashboard() { hideAllViews(); document.getElementById('admin-dashboard-view').classList.add('active'); switchAdminDashTab('input'); }
+        function openAdminReports() { hideAllViews(); document.getElementById('admin-reports-view').classList.add('active'); showReportType('harian'); }
+
+        function switchAdminDashTab(tab) {
+            if (tab === 'input') {
+                document.getElementById('admin-sub-input').style.display = 'block';
+                document.getElementById('admin-sub-view').style.display = 'none';
+                document.getElementById('btn-tab-input').style.backgroundColor = 'var(--dark-green)';
+                document.getElementById('btn-tab-view').style.backgroundColor = 'var(--accent-green)';
+            } else {
+                document.getElementById('admin-sub-input').style.display = 'none';
+                document.getElementById('admin-sub-view').style.display = 'block';
+                document.getElementById('btn-tab-input').style.backgroundColor = 'var(--accent-green)';
+                document.getElementById('btn-tab-view').style.backgroundColor = 'var(--dark-green)';
+                renderAdminProductTable();
+            }
+        }
+
+        function previewUploadImage(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    uploadedImageBase64 = evt.target.result;
+                    document.getElementById('preview-img').src = uploadedImageBase64;
+                    document.getElementById('preview-img').style.display = 'block';
+                    document.getElementById('preview-text').style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handleAdminAddProduct(e) {
+            e.preventDefault();
+            products.unshift({
+                id: Date.now(),
+                name: document.getElementById('admin-prod-name').value,
+                price: parseInt(document.getElementById('admin-prod-price').value),
+                image: uploadedImageBase64,
+                rating: 0,
+                sold: 0
+            });
+            alert("Produk berhasil ditambahkan!");
+            switchAdminDashTab('view');
+        }
+
+        function renderAdminProductTable() {
+            const tbody = document.getElementById('admin-product-table-body');
+            tbody.innerHTML = '';
+            products.forEach(p => {
+                tbody.innerHTML += `<tr><td><img src="${p.image}" style="width: 45px; height: 45px; border-radius: 6px; object-fit: cover;"></td><td><strong>${p.name}</strong></td><td>Rp ${p.price.toLocaleString('id-ID')}</td><td>${p.sold}</td><td>⭐ ${p.rating}</td></tr>`;
+            });
+        }
+
+        function showReportType(type) {
+            const titleEl = document.getElementById('report-title');
+            const tbody = document.getElementById('report-table-body');
+            if (type === 'harian') {
+                titleEl.innerText = "Laporan Penjualan Harian";
+                tbody.innerHTML = `<tr><td>Hari Ini</td><td>0 Transaksi</td><td>Rp 0</td></tr>`;
+            } else if (type === 'bulanan') {
+                titleEl.innerText = "Laporan Penjualan Bulanan";
+                tbody.innerHTML = `<tr><td>Bulan Ini</td><td>28 Transaksi</td><td>Rp 64.500.000</td></tr>`;
+            } else if (type === 'tahunan') {
+                titleEl.innerText = "Laporan Penjualan Tahunan";
+                tbody.innerHTML = `<tr><td>Tahun Ini (2026)</td><td>320 Transaksi</td><td>Rp 785.400.000</td></tr>`;
+            }
+        }
+    </script>
+</body>
+</html>
